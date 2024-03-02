@@ -12,6 +12,7 @@ class HomeController {
     return randomId;
   }
 
+  //effettua una richiesta a pokeapi e ottiene il body
   Future<Map<String, dynamic>> fetchPokemonDetails(int id) async {
     final response =
         await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$id'));
@@ -22,6 +23,7 @@ class HomeController {
     }
   }
 
+  //aggiunge 4 numeri randomici ad una lista vuota
   List<int> getRandomPokemonIds() {
     List<int> lista = [];
 
@@ -31,6 +33,7 @@ class HomeController {
     return lista;
   }
 
+  //da una lista vuota ritorna un elemento in posizione da 0-3
   int scegliPokemon(List<int> lista) {
     int scelto = generator.nextInt(3);
 
