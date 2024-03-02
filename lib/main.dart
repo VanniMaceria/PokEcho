@@ -56,7 +56,7 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   int currentPage = 0;
-  List<Widget> pages = const [
+  List<Widget> pages = [
     Home(),
     Ricerca()
   ]; //lista delle pagine della bottomNavigationBar
