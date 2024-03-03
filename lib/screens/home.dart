@@ -1,6 +1,5 @@
 import 'package:pokecho/controller/home_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:pokecho/utils/custom_appbar.dart';
 
 class Home extends StatefulWidget {
@@ -12,12 +11,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final HomeController _homeController = HomeController();
-  late Future<Map<String, dynamic>> _pokemonDetails1;
-  late Future<Map<String, dynamic>> _pokemonDetails2;
-  late Future<Map<String, dynamic>> _pokemonDetails3;
-  late Future<Map<String, dynamic>> _pokemonDetails4;
-  List<int> _pokemonIds = [];
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  int _score = 0;
 
   @override
   void initState() {
@@ -26,37 +20,21 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _aggiornaPokemon() async {
-    _pokemonIds =
-        _homeController.getRandomPokemonIds(); //ottengo 4 id casuali di pokemon
+    _homeController.setListIds(_homeController
+        .getRandomPokemonIds()); // Ottengo 4 id casuali di pokemon
     setState(() {
-      _pokemonDetails1 = _homeController.fetchPokemonDetails(_pokemonIds[0]);
-      _pokemonDetails2 = _homeController.fetchPokemonDetails(_pokemonIds[1]);
-      _pokemonDetails3 = _homeController.fetchPokemonDetails(_pokemonIds[2]);
-      _pokemonDetails4 = _homeController.fetchPokemonDetails(_pokemonIds[3]);
+      _homeController.setPokemonDetails1(
+          _homeController.fetchPokemonDetails(_homeController.getListIds()[0]));
+      _homeController.setPokemonDetails2(
+          _homeController.fetchPokemonDetails(_homeController.getListIds()[1]));
+      _homeController.setPokemonDetails3(
+          _homeController.fetchPokemonDetails(_homeController.getListIds()[2]));
+      _homeController.setPokemonDetails4(
+          _homeController.fetchPokemonDetails(_homeController.getListIds()[3]));
     });
   }
 
-  Future<void> _riproduciSuono() async {
-    List<Future<Map<String, dynamic>>> pokemonDetails = [
-      _pokemonDetails1,
-      _pokemonDetails2,
-      _pokemonDetails3,
-      _pokemonDetails4,
-    ];
-
-    int idPkmn = _homeController.scegliPokemon(_pokemonIds);
-    print("ID -> $idPkmn");
-    int randomIndex = _pokemonIds.indexOf(idPkmn);
-    print("\n\n\nPosizione del pokemon da indovinare: $randomIndex");
-    Map<String, dynamic> pokemonData = await pokemonDetails[
-        randomIndex]; //accedo al body del pokemon con posizione nella UI che funge da chiave dell'array
-    String? versoUrl = pokemonData['cries']['legacy'];
-    if (versoUrl != null) {
-      _audioPlayer.play(UrlSource(versoUrl));
-    } else {
-      print("URL del verso non disponibile");
-    }
-  }
+  void aggiornaPunteggio() {}
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +44,10 @@ class _HomeState extends State<Home> {
         children: [
           Expanded(
             child: FutureBuilder(
-              future: _pokemonDetails1,
+              future: _homeController.getPokemonDetails1(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
@@ -77,28 +55,25 @@ class _HomeState extends State<Home> {
                     child: Text('Error: ${snapshot.error}'),
                   );
                 } else {
-                  final pokemonData = snapshot.data as Map<String, dynamic>;
-                  final String spriteUrl =
-                      pokemonData['sprites']['front_default'];
                   return GridView.count(
                     crossAxisCount: 2,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     children: List.generate(4, (index) {
                       Future<Map<String, dynamic>> pokemonDetails;
                       switch (index) {
                         case 0:
-                          pokemonDetails = _pokemonDetails1;
+                          pokemonDetails = _homeController.getPokemonDetails1();
                           break;
                         case 1:
-                          pokemonDetails = _pokemonDetails2;
+                          pokemonDetails = _homeController.getPokemonDetails2();
                           break;
                         case 2:
-                          pokemonDetails = _pokemonDetails3;
+                          pokemonDetails = _homeController.getPokemonDetails3();
                           break;
                         case 3:
-                          pokemonDetails = _pokemonDetails4;
+                          pokemonDetails = _homeController.getPokemonDetails4();
                           break;
                         default:
                           throw Exception("Invalid index");
@@ -108,7 +83,7 @@ class _HomeState extends State<Home> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -130,11 +105,54 @@ class _HomeState extends State<Home> {
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: _aggiornaPokemon,
-            child: Text("Aggiorna"),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "$_score",
+                  style: const TextStyle(fontSize: 34),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(30),
+                      child: ElevatedButton(
+                        onPressed: _aggiornaPokemon,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFAF9F6),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(18),
+                            shadowColor: const Color(0xFFD02525)),
+                        child: const Icon(
+                          Icons.refresh_outlined,
+                          color: Color(0xFFD02525),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(30),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _homeController.riproduciSuono();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFAF9F6),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(18),
+                            shadowColor: const Color(0xFFD02525)),
+                        child: const Icon(
+                          Icons.play_arrow_outlined,
+                          color: Color(0xFFD02525),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          ElevatedButton(onPressed: _riproduciSuono, child: Text("Play"))
         ],
       ),
     );
@@ -142,7 +160,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _homeController.getAudioPlayer().dispose();
     super.dispose();
   }
 }
