@@ -1,6 +1,8 @@
+import 'package:pokecho/controller/connection_controller.dart';
 import 'package:pokecho/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:pokecho/utils/custom_appbar.dart';
+import '../main.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,11 +13,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final HomeController _homeController = HomeController();
+  late ConnectionController _connectionController;
   int _score = 0;
 
   @override
   void initState() {
     super.initState();
+    _connectionController = ConnectionController(navigatorKey: navigatorKey);
     _aggiornaPokemon();
   }
 
