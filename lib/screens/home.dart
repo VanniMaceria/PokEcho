@@ -15,6 +15,7 @@ class _HomeState extends State<Home> {
   final HomeController _homeController = HomeController();
   late ConnectionController _connectionController;
   int _score = 0;
+  late Future<int> _indexCurrentPkmn;
 
   @override
   void initState() {
@@ -38,7 +39,45 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void aggiornaPunteggio() {}
+  void aggiornaPunteggio(Future<int> selectedPokemonIndexFuture) {
+    selectedPokemonIndexFuture.then((selectedPokemonIndex) {
+      _indexCurrentPkmn.then((indexCurrentPkmn) {
+        if (selectedPokemonIndex == indexCurrentPkmn) {
+          setState(() {
+            _score++;
+            _aggiornaPokemon();
+          });
+        } else {
+          setState(() {
+            _score = 0;
+            _mostraGameOverDialog();
+          });
+        }
+      });
+    });
+  }
+
+  Future<void> _mostraGameOverDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Game Over')),
+          content: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              _aggiornaPokemon();
+            },
+            child: const Icon(
+              Icons.refresh_outlined,
+              color: Color(0xFFD02525),
+              size: 50,
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +132,17 @@ class _HomeState extends State<Home> {
                           } else {
                             final pokemonData =
                                 snapshot.data as Map<String, dynamic>;
-                            final String spriteUrl =
-                                pokemonData['sprites']['front_default'];
-                            return Image.network(
-                              spriteUrl,
-                              width: 100,
-                              height: 100,
+                            final String spriteUrl = pokemonData['sprites']
+                                ['other']['official-artwork']['front_default'];
+                            return GestureDetector(
+                              onTap: () {
+                                aggiornaPunteggio(Future.value(index));
+                              },
+                              child: Image.network(
+                                spriteUrl,
+                                width: 100,
+                                height: 100,
+                              ),
                             );
                           }
                         },
@@ -123,29 +167,18 @@ class _HomeState extends State<Home> {
                     Container(
                       margin: const EdgeInsets.all(30),
                       child: ElevatedButton(
-                        onPressed: _aggiornaPokemon,
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFAF9F6),
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(18),
-                            shadowColor: const Color(0xFFD02525)),
-                        child: const Icon(
-                          Icons.refresh_outlined,
-                          color: Color(0xFFD02525),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(30),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _homeController.riproduciSuono();
+                        onPressed: () async {
+                          int index = await _homeController.riproduciSuono();
+                          setState(() {
+                            _indexCurrentPkmn = Future.value(index);
+                          });
                         },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFAF9F6),
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(18),
-                            shadowColor: const Color(0xFFD02525)),
+                          backgroundColor: const Color(0xFFFAF9F6),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(18),
+                          shadowColor: const Color(0xFFD02525),
+                        ),
                         child: const Icon(
                           Icons.play_arrow_outlined,
                           color: Color(0xFFD02525),

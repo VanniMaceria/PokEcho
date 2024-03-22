@@ -67,7 +67,7 @@ class HomeController {
   }
 
   int getRandomId() {
-    int randomId = generator.nextInt(700);
+    int randomId = generator.nextInt(1026);
 
     return randomId;
   }
@@ -100,7 +100,7 @@ class HomeController {
     return lista.elementAt(scelto);
   }
 
-  Future<void> riproduciSuono() async {
+  Future<int> riproduciSuono() async {
     List<Future<Map<String, dynamic>>> pokemonDetails = [
       _pokemonDetails1,
       _pokemonDetails2,
@@ -114,11 +114,12 @@ class HomeController {
     print("Posizione del pokemon da indovinare: $randomIndex\n\n\n");
     Map<String, dynamic> pokemonData = await pokemonDetails[
         randomIndex]; //accedo al body del pokemon con posizione nella UI che funge da chiave dell'array
-    String? versoUrl = pokemonData['cries']['legacy'];
+    String? versoUrl = pokemonData['cries']['latest'];
     if (versoUrl != null) {
       _audioPlayer.play(UrlSource(versoUrl));
     } else {
       print("URL del verso non disponibile");
     }
+    return randomIndex;
   }
 }
