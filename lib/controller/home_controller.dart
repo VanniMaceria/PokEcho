@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController {
   var generator = Random();
@@ -11,6 +12,7 @@ class HomeController {
   late Future<Map<String, dynamic>> _pokemonDetails4;
   List<int> _pokemonIds = [];
   final AudioPlayer _audioPlayer = AudioPlayer();
+  late SharedPreferences prefs;
 
   //costruttore
   HomeController() {

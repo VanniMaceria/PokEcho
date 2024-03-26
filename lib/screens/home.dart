@@ -3,6 +3,7 @@ import 'package:pokecho/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:pokecho/utils/custom_appbar.dart';
 import '../main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -16,17 +17,27 @@ class _HomeState extends State<Home> {
   late ConnectionController _connectionController;
   int _score = 0;
   late Future<int> _indexCurrentPkmn;
+  late SharedPreferences _prefs;
+  int _bestScore = 0;
 
   @override
   void initState() {
     super.initState();
     _connectionController = ConnectionController(navigatorKey: navigatorKey);
+    _loadScores();
     _aggiornaPokemon();
   }
 
-  Future<void> _aggiornaPokemon() async {
-    _homeController.setListIds(_homeController
-        .getRandomPokemonIds()); // Ottengo 4 id casuali di pokemon
+  void _loadScores() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _score = prefs.getInt("CurrentScore") ?? 0;
+      _bestScore = prefs.getInt("BestScore") ?? 0;
+    });
+  }
+
+  void _aggiornaPokemon() async {
+    _homeController.setListIds(_homeController.getRandomPokemonIds());
     setState(() {
       _homeController.setPokemonDetails1(
           _homeController.fetchPokemonDetails(_homeController.getListIds()[0]));
@@ -39,12 +50,16 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void aggiornaPunteggio(Future<int> selectedPokemonIndexFuture) {
+  void _aggiornaPunteggio(Future<int> selectedPokemonIndexFuture) {
     selectedPokemonIndexFuture.then((selectedPokemonIndex) {
       _indexCurrentPkmn.then((indexCurrentPkmn) {
         if (selectedPokemonIndex == indexCurrentPkmn) {
           setState(() {
             _score++;
+            if (_score > _bestScore) {
+              _bestScore = _score;
+              _prefs.setInt("BestScore", _bestScore); //aggiorno il nuovo record
+            }
             _aggiornaPokemon();
           });
         } else {
@@ -136,7 +151,7 @@ class _HomeState extends State<Home> {
                                 ['other']['official-artwork']['front_default'];
                             return GestureDetector(
                               onTap: () {
-                                aggiornaPunteggio(Future.value(index));
+                                _aggiornaPunteggio(Future.value(index));
                               },
                               child: Image.network(
                                 spriteUrl,
@@ -157,6 +172,10 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  "Best Score: $_bestScore",
+                  style: const TextStyle(fontSize: 34),
+                ),
                 Text(
                   "$_score",
                   style: const TextStyle(fontSize: 34),
@@ -195,9 +214,16 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void _saveScores() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt("CurrentScore", _score);
+    await prefs.setInt("BestScore", _bestScore);
+  }
+
   @override
   void dispose() {
     _homeController.getAudioPlayer().dispose();
+    _saveScores(); // Salvataggio dei punteggi prima di distruggere il widget
     super.dispose();
   }
 }

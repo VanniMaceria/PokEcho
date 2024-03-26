@@ -5,6 +5,10 @@ import 'package:audioplayers/audioplayers.dart';
 class RicercaController {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  AudioPlayer getAudioPlayer() {
+    return _audioPlayer;
+  }
+
   //qui si effettua una richiesta dove il parametro può essere sia il nome che l'id numerico
   Future<Map<String, dynamic>> fetchPokemonDetails(var filtro) async {
     //easter egg stupido :)

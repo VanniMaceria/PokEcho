@@ -138,6 +138,7 @@ class _RicercaState extends State<Ricerca> {
   @override
   void dispose() {
     _textEditingController.dispose();
+    _ricercaController.getAudioPlayer().dispose();
     super.dispose();
   }
 }
