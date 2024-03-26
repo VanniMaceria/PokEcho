@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
           scaffoldBackgroundColor: const Color(0xFFFAF9F6),
+          fontFamily: "Kanit",
         ),
         home: const RootPage() //la home è RootPage,
         );
