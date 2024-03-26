@@ -50,8 +50,9 @@ class _RicercaState extends State<Ricerca> {
                     // Estraggo il testo
                     if (_textEditingController.text.isNotEmpty) {
                       setState(() {
-                        _searchResult = _ricercaController
-                            .fetchPokemonDetails(_textEditingController.text);
+                        _searchResult = _ricercaController.fetchPokemonDetails(
+                            _textEditingController.text
+                                .toLowerCase()); //l'api non funziona se i nomi non sono in lowercase
                       });
                     } else {
                       // Se il campo di ricerca è vuoto, assegna un valore vuoto a _searchResult
