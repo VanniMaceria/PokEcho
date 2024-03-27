@@ -24,8 +24,13 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _connectionController = ConnectionController(navigatorKey: navigatorKey);
+    _initPrefs();
     _loadScores();
     _aggiornaPokemon();
+  }
+
+  void _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 
   void _loadScores() async {
