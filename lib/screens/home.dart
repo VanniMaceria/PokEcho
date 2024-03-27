@@ -102,7 +102,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: "Home"),
+      appBar: CustomAppBar(
+        title: "Pokecho",
+        context: context,
+      ),
       body: Column(
         children: [
           Expanded(
