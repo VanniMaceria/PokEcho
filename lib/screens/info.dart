@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokecho/utils/custom_appbar_back.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:pokecho/utils/url_launcher.dart';
 
 class Info extends StatefulWidget {
   const Info({super.key});
@@ -11,6 +11,7 @@ class Info extends StatefulWidget {
 }
 
 class _InfoState extends State<Info> {
+  final UrlLauncher _urlLauncher = UrlLauncher();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,12 +46,12 @@ class _InfoState extends State<Info> {
                     ' - INTERNET PERMISSION: This permission allows the application to access Internet to download data, send API requests, and communicate with external servers. It is necessary if the application needs to retrieve information from online sources or interact with web services;\n\n'
                         ' - QUERY_ALL_PACKAGES: This permission allows the app to access package information from other apps. It is required to sync data with other apps or integrate with third-party services. For example, it allows you to open applications outside the main application.'),
                 _boxAlertInformazioni("Artistic credits",
-                    "The illustrations used in this application are provided by © Storyset.\nFor further information and to discover more fantastic resources, visit www.storyset.com\n\nThe Pokémon information used in this application is provided by The Pokémon Company.\nAll rights to Pokémon are owned by The Pokémon Company. For more information about Pokémon and their properties, visit The Pokémon Company's official website at www.pokemon.com.")
+                    "The illustrations used in this application are provided by © Storyset.\nFor further information and to discover more fantastic resources, visit www.storyset.com\n\nThe Pokémon information used in this application is provided by © The Pokémon Company.\nAll rights to Pokémon are owned by © The Pokémon Company. For more information about Pokémon and their properties, visit The Pokémon Company's official website at www.pokemon.com.")
               ],
             ),
             GestureDetector(
               onTap: () {
-                _launchURL('https://pokeapi.co/');
+                _urlLauncher.launchURL('https://pokeapi.co/');
               },
               child: Container(
                 margin:
@@ -83,7 +84,7 @@ class _InfoState extends State<Info> {
   Widget _boxInformazione(String text, String imagePath, String url) {
     return GestureDetector(
       onTap: () {
-        _launchURL(url);
+        _urlLauncher.launchURL(url);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -198,13 +199,5 @@ class _InfoState extends State<Info> {
         ),
       ),
     );
-  }
-
-  Future<void> _launchURL(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Errore al lancio di: $url';
-    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokecho/controller/ricerca_controller.dart';
+import 'package:pokecho/utils/url_launcher.dart';
 
 class Ricerca extends StatefulWidget {
   const Ricerca({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class _RicercaState extends State<Ricerca> {
       TextEditingController(); //widget che serve ad estrarre il testo da un TextField
   final RicercaController _ricercaController = RicercaController();
   late Future<Map<String, dynamic>>? _searchResult = Future.value({});
+  final UrlLauncher _urlLauncher = UrlLauncher();
 
   @override
   void initState() {
@@ -99,12 +101,23 @@ class _RicercaState extends State<Ricerca> {
                               child: Column(
                                 children: [
                                   Text(
-                                    "Nessun risultato per '${_textEditingController.text}'",
+                                    "No result for '${_textEditingController.text}'",
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(fontSize: 28),
                                   ),
-                                  Image.asset(
-                                      "assets/img/No data-bro.png"), //<a href="https://storyset.com/data">Data illustrations by Storyset</a>
+                                  GestureDetector(
+                                    onTap: () {
+                                      _urlLauncher.launchURL(
+                                          "https://storyset.com/data");
+                                    },
+                                    child: Image.asset(
+                                        "assets/img/No data-bro.png"),
+                                  ), //<a href="https://storyset.com/data">Data illustrations by Storyset</a>
+                                  const Text(
+                                    "Are you sure it's a Pokèmon?",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 28),
+                                  ),
                                 ],
                               ),
                             );
