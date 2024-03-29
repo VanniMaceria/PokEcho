@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final HomeController _homeController = HomeController();
+  // ignore: unused_field
   late ConnectionController _connectionController;
   int _score = 0;
   late Future<int> _indexCurrentPkmn;

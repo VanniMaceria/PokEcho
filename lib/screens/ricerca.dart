@@ -10,7 +10,7 @@ class Ricerca extends StatefulWidget {
 
 class _RicercaState extends State<Ricerca> {
   final TextEditingController _textEditingController =
-      TextEditingController(); // Widget che serve ad estrarre il testo da un TextField
+      TextEditingController(); //widget che serve ad estrarre il testo da un TextField
   final RicercaController _ricercaController = RicercaController();
   late Future<Map<String, dynamic>>? _searchResult = Future.value({});
 
@@ -36,7 +36,7 @@ class _RicercaState extends State<Ricerca> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: TextField(
                       controller:
-                          _textEditingController, // Assegno il controller al TextField
+                          _textEditingController, //assegno il controller al TextField
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Cerca per nome o id',
@@ -93,11 +93,20 @@ class _RicercaState extends State<Ricerca> {
                           } else if (snapshot.hasError ||
                               snapshot.data == null ||
                               snapshot.data!.isEmpty) {
-                            // Se si verifica un errore o non ci sono dati validi
-                            // mostra l'immagine
+                            //se si verifica un errore o non ci sono dati validi
+                            //mostro l'immagine di errore
                             return Center(
-                              child: Image.asset(
-                                  "assets/img/No data-bro.png"), //<a href="https://storyset.com/data">Data illustrations by Storyset</a>
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "Nessun risultato per '${_textEditingController.text}'",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 28),
+                                  ),
+                                  Image.asset(
+                                      "assets/img/No data-bro.png"), //<a href="https://storyset.com/data">Data illustrations by Storyset</a>
+                                ],
+                              ),
                             );
                           } else {
                             final pokemonData = snapshot.data!;

@@ -84,7 +84,7 @@ class _RootPageState extends State<RootPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: "Cerca",
+            label: "Search",
           )
         ],
         onTap: (int index) {
