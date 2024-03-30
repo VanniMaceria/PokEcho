@@ -8,6 +8,8 @@ void main() {
   runApp(const MyApp());
 }
 
+//@author: Andrea Bucci
+//@github: Vanni Maceria
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
