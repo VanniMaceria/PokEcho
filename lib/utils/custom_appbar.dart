@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokecho/screens/info.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -32,7 +33,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: Row(
+        children: [
+          SvgPicture.asset(
+            "assets/img/logos/pokecho_logo_white.svg",
+            height: 50,
+            fit: BoxFit.contain,
+          ),
+          Text(""),
+        ],
+      ),
       actions: actions,
       backgroundColor: const Color(0xFFD02525),
       automaticallyImplyLeading: false,

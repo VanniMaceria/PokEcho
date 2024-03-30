@@ -70,7 +70,7 @@ class _InfoState extends State<Info> {
                 ),
                 padding: const EdgeInsets.all(20),
                 child: const Text(
-                  "This application uses data provided by PokeAPI, a free and open service. We are committed to adhering to PokeAPI's fair usage policy and following guidelines",
+                  "Pokecho uses data provided by PokeAPI, a free and open service. We are committed to adhering to PokeAPI's fair usage policy and following guidelines",
                   style: TextStyle(fontSize: 18),
                 ),
               ),
