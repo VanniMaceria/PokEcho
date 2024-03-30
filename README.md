@@ -12,4 +12,4 @@ Here some schreenshots:
 </div>
 
 
-You can download the apk by clicking [here](https://github.com/VanniMaceria/PokEcho/blob/master/app-release.apk) 
+You can download the apk by clicking [here](https://github.com/VanniMaceria/PokEcho/raw/master/app-release.apk) 
