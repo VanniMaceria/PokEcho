@@ -11,4 +11,5 @@ Here some schreenshots:
   <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/bc8af912-8126-4439-a89e-1f6c04ff6936" width="230" height="500">
 </div>
 
-You can download the apk by clicking [here](link) 
+
+You can download the apk by clicking [here](https://github.com/VanniMaceria/PokEcho/blob/master/app-release.apk) 
