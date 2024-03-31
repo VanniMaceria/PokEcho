@@ -14,7 +14,7 @@ Here some schreenshots:
 <br>
 
 > [!WARNING] 
-> **Internet conncection is required in order to use the app** <br>
+> **Internet connection is required in order to use the app** <br>
  <br>
 
 You can download the apk by clicking [here](https://github.com/VanniMaceria/PokEcho/raw/master/app-release.apk) 
