@@ -5,7 +5,7 @@ Mobile application game that allows to play pokèmon cries and take a quiz on th
 
 > Developed in Dart using Flutter framework
 
-Here some schreenshots:
+Here some screenshots:
 <div align ="center">
   <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/d88db6ff-417f-4f04-aaee-12c34e6c97e4" width="230" height="500"> &nbsp; &nbsp;
   <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/bc8af912-8126-4439-a89e-1f6c04ff6936" width="230" height="500">
