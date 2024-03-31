@@ -11,4 +11,12 @@ Here some schreenshots:
   <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/bc8af912-8126-4439-a89e-1f6c04ff6936" width="230" height="500">
 </div>
 
-You can download the apk by clicking [here](link) 
+<br>
+
+> [!WARNING] 
+> **Internet connection is required in order to use the app** <br>
+ <br>
+
+You can download the apk by clicking [here](https://github.com/VanniMaceria/PokEcho/raw/master/app-release.apk) 
+<br>
+
