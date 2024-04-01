@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pokecho/controller/ricerca_controller.dart';
 import 'package:pokecho/utils/url_launcher.dart';
 
@@ -122,32 +123,21 @@ class _RicercaState extends State<Ricerca> {
                               ),
                             );
                           } else {
+                            Fluttertoast.showToast(
+                                msg: "Click on the pokèmon to play the cry");
                             final pokemonData = snapshot.data!;
                             final String spriteUrl = pokemonData['sprites']
                                 ['other']['official-artwork']['front_default'];
-                            return Image.network(spriteUrl);
+                            return GestureDetector(
+                                onTap: () {
+                                  _ricercaController
+                                      .riproduciVerso(pokemonData);
+                                },
+                                child: Image.network(spriteUrl));
                           }
                         },
                       ),
                     const SizedBox(height: 20),
-                    if (_searchResult != null)
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFAF9F6),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(18),
-                          shadowColor: const Color(0xFFD02525),
-                        ),
-                        onPressed: () {
-                          _searchResult?.then((pokemonData) {
-                            _ricercaController.riproduciVerso(pokemonData);
-                          });
-                        },
-                        child: const Icon(
-                          Icons.play_arrow_outlined,
-                          color: Color(0xFFD02525),
-                        ),
-                      ),
                   ],
                 ),
               ),
