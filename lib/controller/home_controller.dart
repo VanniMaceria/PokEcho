@@ -87,12 +87,12 @@ class HomeController {
 
   //aggiunge 4 numeri randomici ad una lista vuota
   List<int> getRandomPokemonIds() {
-    List<int> lista = [];
-
-    for (int i = 0; i < 4; i++) {
-      lista.add(getRandomId());
+    Set<int> idSet = {}; //Utilizzo un set per garantire l'unicità dei valori
+    while (idSet.length < 4) {
+      int randomId = getRandomId();
+      idSet.add(randomId);
     }
-    return lista;
+    return idSet.toList(); //converto il set in lista
   }
 
   //da una lista vuota ritorna un elemento in posizione da 0-3
@@ -123,5 +123,19 @@ class HomeController {
       print("URL del verso non disponibile");
     }
     return randomIndex;
+  }
+
+  String getPokemonSpriteUrl(int id) {
+    return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
+  }
+
+  Future<String> getPokemonSpriteUrlByIndex(int index) async {
+    //0 - 3
+    if (index >= 0 && index < _pokemonIds.length) {
+      int pokemonId = _pokemonIds[index];
+      return getPokemonSpriteUrl(pokemonId);
+    } else {
+      throw Exception('Indice non esistente');
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pokecho/utils/custom_appbar.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class _HomeState extends State<Home> {
   late Future<int> _indexCurrentPkmn;
   late SharedPreferences _prefs;
   int _bestScore = 0;
+  bool _playButtonPressed = false;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _HomeState extends State<Home> {
   void _aggiornaPokemon() async {
     _homeController.setListIds(_homeController.getRandomPokemonIds());
     setState(() {
+      _playButtonPressed = false;
       _homeController.setPokemonDetails1(
           _homeController.fetchPokemonDetails(_homeController.getListIds()[0]));
       _homeController.setPokemonDetails2(
@@ -71,28 +74,53 @@ class _HomeState extends State<Home> {
         } else {
           setState(() {
             _score = 0;
-            _mostraGameOverDialog();
+            _mostraGameOverDialog(
+                _homeController.getListIds()[indexCurrentPkmn]);
+            //prendo l'elemento in posizione 'vincente' della lista
           });
         }
       });
     });
   }
 
-  Future<void> _mostraGameOverDialog() async {
+  Future<void> _mostraGameOverDialog(int index) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Center(child: Text('Game Over')),
+          title: const Center(
+              child: Text(
+            'Game Over',
+            style: TextStyle(fontSize: 32),
+          )),
+          contentPadding:
+              EdgeInsets.zero, // Rimuove il padding intorno al contenuto
           content: GestureDetector(
             onTap: () {
               Navigator.of(context).pop();
               _aggiornaPokemon();
             },
-            child: const Icon(
-              Icons.refresh_outlined,
-              color: Color(0xFFD02525),
-              size: 50,
+            child: Column(
+              mainAxisSize:
+                  MainAxisSize.min, // Imposta la dimensione minima del Column
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(
+                    _homeController.getPokemonSpriteUrl(index),
+                    fit: BoxFit.contain, // Adatta l'immagine al box
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: const Icon(
+                    Icons.refresh_outlined,
+                    color: Color(0xFFD02525),
+                    size: 50,
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -159,9 +187,20 @@ class _HomeState extends State<Home> {
                             final String spriteUrl = pokemonData['sprites']
                                 ['other']['official-artwork']['front_default'];
                             return GestureDetector(
-                              onTap: () {
-                                _aggiornaPunteggio(Future.value(index));
-                              },
+                              onTap: _playButtonPressed
+                                  ? () {
+                                      //se il pulsante 'Play' è stato premuto si può procedere col gioco
+                                      _aggiornaPunteggio(Future.value(index));
+                                    }
+                                  : () {
+                                      //altrimenti mostra un Toast
+                                      Fluttertoast.showToast(
+                                        msg: "Premi il pulsante 'Play'",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                      );
+                                    },
                               child: Image.network(
                                 spriteUrl,
                                 width: 100,
@@ -199,6 +238,7 @@ class _HomeState extends State<Home> {
                           int index = await _homeController.riproduciSuono();
                           setState(() {
                             _indexCurrentPkmn = Future.value(index);
+                            _playButtonPressed = true;
                           });
                         },
                         style: ElevatedButton.styleFrom(
