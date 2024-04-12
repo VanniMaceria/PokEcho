@@ -15,7 +15,7 @@ class _InfoState extends State<Info> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBarBack(title: "Info"),
+      appBar: const CustomAppBarBack(title: "About"),
       body: SingleChildScrollView(
         child: Column(
           children: [

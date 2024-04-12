@@ -42,7 +42,7 @@ class _RicercaState extends State<Ricerca> {
                           _textEditingController, //assegno il controller al TextField
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Cerca per nome o id',
+                          hintText: 'Search by name or id',
                           filled: true,
                           fillColor: Colors.white),
                     ),
@@ -58,7 +58,7 @@ class _RicercaState extends State<Ricerca> {
                                 .toLowerCase()); //l'api non funziona se i nomi non sono in lowercase
                       });
                     } else {
-                      // Se il campo di ricerca è vuoto, assegna un valore vuoto a _searchResult
+                      //se il campo di ricerca è vuoto, assegna un valore vuoto a _searchResult
                       setState(() {
                         _searchResult = null;
                       });

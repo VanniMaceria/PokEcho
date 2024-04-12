@@ -36,6 +36,12 @@ class _HomeState extends State<Home> {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  void _saveScores() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt("CurrentScore", _score);
+    await prefs.setInt("BestScore", _bestScore);
+  }
+
   void _loadScores() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -70,13 +76,15 @@ class _HomeState extends State<Home> {
               _prefs.setInt("BestScore", _bestScore); //aggiorno il nuovo record
             }
             _aggiornaPokemon();
+            _saveScores(); //meglio tener sempre aggiornati i punteggi
           });
         } else {
           setState(() {
             _score = 0;
+            //prendo il valore dell'elemento in posizione 'vincente' della lista
             _mostraGameOverDialog(
                 _homeController.getListIds()[indexCurrentPkmn]);
-            //prendo l'elemento in posizione 'vincente' della lista
+            _saveScores(); //meglio tener sempre aggiornati i punteggi
           });
         }
       });
@@ -195,7 +203,7 @@ class _HomeState extends State<Home> {
                                   : () {
                                       //altrimenti mostra un Toast
                                       Fluttertoast.showToast(
-                                        msg: "Premi il pulsante 'Play'",
+                                        msg: "Press 'Play' button",
                                         toastLength: Toast.LENGTH_SHORT,
                                         gravity: ToastGravity.CENTER,
                                         timeInSecForIosWeb: 1,
@@ -263,16 +271,10 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _saveScores() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt("CurrentScore", _score);
-    await prefs.setInt("BestScore", _bestScore);
-  }
-
   @override
   void dispose() {
     _homeController.getAudioPlayer().dispose();
-    _saveScores(); // Salvataggio dei punteggi prima di distruggere il widget
+    _saveScores(); //salvataggio dei punteggi prima di distruggere il widget
     super.dispose();
   }
 }
