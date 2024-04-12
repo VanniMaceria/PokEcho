@@ -8,7 +8,8 @@ Mobile application game that allows to play pokèmon cries and take a quiz on th
 Here some screenshots:
 <div align ="center">
   <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/d88db6ff-417f-4f04-aaee-12c34e6c97e4" width="230" height="500"> &nbsp; &nbsp;
-  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/bc8af912-8126-4439-a89e-1f6c04ff6936" width="230" height="500">
+  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/bc8af912-8126-4439-a89e-1f6c04ff6936" width="230" height="500"> &nbsp; &nbsp;
+  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/dbd3be88-a33b-4c9d-a568-c74d8f5bc019" width="230" height="500"> 
 </div>
 
 <br>
