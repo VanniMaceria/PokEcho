@@ -5,6 +5,7 @@ import 'package:pokecho/utils/custom_appbar.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -22,6 +23,8 @@ class _HomeState extends State<Home> {
   late SharedPreferences _prefs;
   int _bestScore = 0;
   bool _playButtonPressed = false;
+  Timer? _timer;
+  int _timeLeft = 10;
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _HomeState extends State<Home> {
   }
 
   void _aggiornaPokemon() async {
+    _timer?.cancel(); //annulla il timer quando i Pokémon vengono aggiornati
     _homeController.setListIds(_homeController.getRandomPokemonIds());
     setState(() {
       _playButtonPressed = false;
@@ -77,6 +81,7 @@ class _HomeState extends State<Home> {
             }
             _aggiornaPokemon();
             _saveScores(); //meglio tener sempre aggiornati i punteggi
+            _timeLeft = 10;
           });
         } else {
           setState(() {
@@ -106,6 +111,8 @@ class _HomeState extends State<Home> {
           content: GestureDetector(
             onTap: () {
               Navigator.of(context).pop();
+              _timer?.cancel;
+              _timeLeft = 10;
               _aggiornaPokemon();
             },
             child: Column(
@@ -136,6 +143,27 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void _startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_timeLeft == 0) {
+          setState(() {
+            _timer?.cancel();
+            _indexCurrentPkmn.then((index) {
+              _mostraGameOverDialog(_homeController.getListIds()[index]);
+            });
+          });
+        } else {
+          setState(() {
+            _timeLeft--;
+          });
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,6 +173,10 @@ class _HomeState extends State<Home> {
       ),
       body: Column(
         children: [
+          Text(
+            "Time left: $_timeLeft",
+            style: const TextStyle(fontSize: 20),
+          ),
           Expanded(
             child: FutureBuilder(
               future: _homeController.getPokemonDetails1(),
@@ -247,6 +279,9 @@ class _HomeState extends State<Home> {
                           setState(() {
                             _indexCurrentPkmn = Future.value(index);
                             _playButtonPressed = true;
+                            if (_playButtonPressed) {
+                              _startTimer();
+                            }
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -275,6 +310,7 @@ class _HomeState extends State<Home> {
   void dispose() {
     _homeController.getAudioPlayer().dispose();
     _saveScores(); //salvataggio dei punteggi prima di distruggere il widget
+    _timer!.cancel();
     super.dispose();
   }
 }
