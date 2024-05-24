@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "599177710041",
+    "project_id": "pokecho-cff59",
+    "storage_bucket": "pokecho-cff59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599177710041:android:5f57d031c6aca26535b1c8",
+        "android_client_info": {
+          "package_name": "com.example.pokecho"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzynE6sXG-yFMZ0Id3zMGUrXVgfmrUrIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

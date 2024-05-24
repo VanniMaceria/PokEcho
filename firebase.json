@@ -1,0 +1,25 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "pokecho-cff59",
+                    "appId": "1:599177710041:android:5f57d031c6aca26535b1c8",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "pokecho-cff59",
+                    "configurations": {
+                        "android": "1:599177710041:android:5f57d031c6aca26535b1c8",
+                        "ios": "1:599177710041:ios:9837cfd2fdd7e67535b1c8",
+                        "macos": "1:599177710041:ios:9837cfd2fdd7e67535b1c8",
+                        "web": "1:599177710041:web:81ea7c3e5ae6be9a35b1c8",
+                        "windows": "1:599177710041:web:367520473e75f22c35b1c8"
+                    }
+                }
+            }
+        }
+    }
+}
