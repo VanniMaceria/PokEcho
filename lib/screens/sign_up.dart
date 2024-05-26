@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokecho/controller/ricerca_controller.dart';
 import '../utils/custom_appbar_back.dart';
 
 class SignUp extends StatefulWidget {
@@ -12,6 +13,7 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final RicercaController _ricercaController = RicercaController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,19 @@ class _SignUpState extends State<SignUp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              GestureDetector(
+                child: Image.asset("assets/img/233_porygon2.png"),
+                onTap: () async {
+                  try {
+                    var json =
+                        await _ricercaController.fetchPokemonDetails(233);
+                    _ricercaController.riproduciVerso(json);
+                  } catch (e) {
+                    print('Failed to fetch Pokemon details: $e');
+                  }
+                },
+              ),
+              SizedBox(height: 16.0),
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -68,7 +83,7 @@ class _SignUpState extends State<SignUp> {
                   },
                   child: Text(
                     "Sign-Up",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ),

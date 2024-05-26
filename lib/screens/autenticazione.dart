@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokecho/screens/login.dart';
+import 'package:pokecho/screens/log_in.dart';
 import 'package:pokecho/screens/sign_up.dart';
 import 'package:pokecho/utils/url_launcher.dart';
 
@@ -55,7 +55,7 @@ class Autenticazione extends StatelessWidget {
                     },
                     child: Text(
                       "Log-In",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
                   ),
                 ),
@@ -75,7 +75,7 @@ class Autenticazione extends StatelessWidget {
                     },
                     child: Text(
                       "Sign-Up",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),
