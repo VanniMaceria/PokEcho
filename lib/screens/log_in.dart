@@ -19,74 +19,76 @@ class _LogInState extends State<LogIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarBack(title: "Log-In"),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                child: Image.asset("assets/img/707_klefki.png"),
-                onTap: () async {
-                  try {
-                    var json =
-                        await _ricercaController.fetchPokemonDetails(707);
-                    _ricercaController.riproduciVerso(json);
-                  } catch (e) {
-                    print('Failed to fetch Pokemon details: $e');
-                  }
-                },
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              Container(
-                height: 50,
-                width: double.infinity,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Color(0xFFD02525),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Process data
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: Image.asset("assets/img/707_klefki.png"),
+                  onTap: () async {
+                    try {
+                      var json =
+                          await _ricercaController.fetchPokemonDetails(707);
+                      _ricercaController.riproduciVerso(json);
+                    } catch (e) {
+                      print('Failed to fetch Pokemon details: $e');
                     }
                   },
-                  child: Text(
-                    "Log-In",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Color(0xFFD02525),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        // Process data
+                      }
+                    },
+                    child: Text(
+                      "Log-In",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
