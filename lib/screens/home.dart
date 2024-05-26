@@ -1,7 +1,7 @@
 import 'package:pokecho/controller/connection_controller.dart';
 import 'package:pokecho/controller/home_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:pokecho/utils/custom_appbar.dart';
+import 'package:pokecho/utils/custom_appbar_home.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CustomAppBarHome(
         title: "Pokecho",
         context: context,
       ),
