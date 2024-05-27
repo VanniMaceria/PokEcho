@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:pokecho/screens/log_in.dart';
 import 'package:pokecho/screens/sign_up.dart';
-import 'package:pokecho/utils/url_launcher.dart';
 
 class Autenticazione extends StatelessWidget {
   Autenticazione({super.key});
 
-  final UrlLauncher _urlLauncher = UrlLauncher();
-
   @override
   Widget build(BuildContext context) {
-    //dimensioni schermo dell'80%
+    // Dimensioni schermo dell'80% (larghezza)
     final double screenWidth = MediaQuery.of(context).size.width;
     final double buttonWidth = screenWidth * 0.8;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Color(0xFFD02525),
       body: Stack(
-        //By default, the non-positioned children of the stack are aligned by their top left corners
         children: [
           Positioned(
             top: 40,
@@ -33,13 +30,27 @@ class Autenticazione extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    _urlLauncher.launchURL("https://storyset.com/data");
-                  },
-                  child: Image.asset("assets/img/Mobile login-bro.png"),
+                Container(
+                  margin: EdgeInsets.only(
+                      top: screenHeight * 0.4, left: 16, right: 16),
+                  width: buttonWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "STAY\nCONNECTED",
+                        style: TextStyle(fontSize: 50, color: Colors.white),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Log-in or register to save your scores and enter the leaderboard",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      )
+                    ],
+                  ),
                 ),
-                SizedBox(height: 80), // Spacing between the image and buttons
+                SizedBox(height: 40),
                 Container(
                   height: 50,
                   width: buttonWidth,

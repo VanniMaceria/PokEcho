@@ -57,6 +57,11 @@ class SignUpController {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  Image.asset(
+                    "assets/gif/porygon2_sprite.gif",
+                    height: 100,
+                    width: 100,
+                  ),
                 ],
               ),
             );
