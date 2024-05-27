@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pokecho/controller/log_in_controller.dart';
 import 'package:pokecho/controller/ricerca_controller.dart';
 import 'package:pokecho/utils/custom_appbar_back.dart';
-import 'package:pokecho/model/auth.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -16,14 +15,7 @@ class _LogInState extends State<LogIn> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final RicercaController _ricercaController = RicercaController();
-
-  Future<void> _logIn() async {
-    try {
-      await Auth().signInWithEmailAndPassword(
-          email: _emailController.text, password: _passwordController.text);
-      //vai alla pagina Utente
-    } on FirebaseAuthException catch (error) {}
-  }
+  final LogInController _logInController = LogInController();
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +81,11 @@ class _LogInState extends State<LogIn> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // Process data
-                        _logIn();
+                        _logInController.logIn(
+                          context: context,
+                          email: _emailController,
+                          password: _passwordController,
+                        );
                       }
                     },
                     child: Text(

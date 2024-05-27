@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokecho/controller/ricerca_controller.dart';
+import '../controller/sign_up_controller.dart';
 import '../utils/custom_appbar_back.dart';
-import 'package:pokecho/model/auth.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -16,13 +15,7 @@ class _SignUpState extends State<SignUp> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final RicercaController _ricercaController = RicercaController();
-
-  Future<void> _signUp() async {
-    try {
-      await Auth().createUserWithEmailAndPassword(
-          email: _emailController.text, password: _passwordController.text);
-    } on FirebaseAuthException catch (error) {}
-  }
+  final SignUpController _signUpController = SignUpController();
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +82,11 @@ class _SignUpState extends State<SignUp> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // Process data
-                        _signUp();
+                        _signUpController.signUp(
+                          context: context,
+                          email: _emailController,
+                          password: _passwordController,
+                        );
                       }
                     },
                     child: Text(
