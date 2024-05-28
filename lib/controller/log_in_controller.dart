@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pokecho/model/auth.dart';
-
 import '../screens/utente.dart';
+import 'package:pokecho/controller/ricerca_controller.dart';
 
 class LogInController {
+  final RicercaController _ricercaController = RicercaController();
+
   LogInController();
 
   Future<void> logIn(
@@ -35,8 +37,10 @@ class LogInController {
         case 'wrong-password':
           errorMessage = 'Wrong password';
           break;
+        case 'invalid-credential':
+          errorMessage = "Incorrect credentials";
         default:
-          errorMessage = 'An error occurred\nTry later';
+          errorMessage = error.code.toLowerCase();
       }
 
       showModalBottomSheet(
@@ -57,10 +61,17 @@ class LogInController {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Image.asset(
-                  "assets/gif/unown_sprite.gif",
-                  height: 100,
-                  width: 100,
+                GestureDetector(
+                  onTap: () async {
+                    var json = await _ricercaController
+                        .fetchPokemonDetails(201); //id unown
+                    _ricercaController.riproduciVerso(json);
+                  },
+                  child: Image.asset(
+                    "assets/gif/unown_sprite.gif",
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
               ],
             ),

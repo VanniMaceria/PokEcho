@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokecho/screens/log_in.dart';
 import 'package:pokecho/screens/sign_up.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class Autenticazione extends StatelessWidget {
   Autenticazione({super.key});
@@ -38,8 +39,44 @@ class Autenticazione extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "STAY\nCONNECTED",
-                        style: TextStyle(fontSize: 50, color: Colors.white),
+                        "STAY",
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50,
+                        child: DefaultTextStyle(
+                          style: const TextStyle(
+                            fontSize: 40.0,
+                            color: Colors.white,
+                          ),
+                          child: AnimatedTextKit(
+                            animatedTexts: [
+                              FadeAnimatedText(
+                                'CONNECTED',
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              FadeAnimatedText(
+                                'UPDATED',
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              FadeAnimatedText(
+                                'COMPETITIVE',
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                            repeatForever: true,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -50,7 +87,7 @@ class Autenticazione extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: screenHeight * 0.05),
                 Container(
                   height: 50,
                   width: buttonWidth,

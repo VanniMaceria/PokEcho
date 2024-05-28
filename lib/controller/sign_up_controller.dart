@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pokecho/controller/ricerca_controller.dart';
 import 'package:pokecho/model/auth.dart';
 import 'package:pokecho/screens/log_in.dart';
 
 class SignUpController {
+  final RicercaController _ricercaController = RicercaController();
+
   SignUpController();
 
   Future<void> signUp(
@@ -57,10 +60,17 @@ class SignUpController {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Image.asset(
-                    "assets/gif/porygon2_sprite.gif",
-                    height: 100,
-                    width: 100,
+                  GestureDetector(
+                    onTap: () async {
+                      var json = await _ricercaController
+                          .fetchPokemonDetails(233); //id porygon2
+                      _ricercaController.riproduciVerso(json);
+                    },
+                    child: Image.asset(
+                      "assets/gif/porygon2_sprite.gif",
+                      height: 100,
+                      width: 100,
+                    ),
                   ),
                 ],
               ),
