@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controller/sign_up_controller.dart';
 import 'package:pokecho/utils/url_launcher.dart';
+import 'package:pokecho/utils/custom_form.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -26,6 +27,7 @@ class _SignUpState extends State<SignUp> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
+              //stop
               child: Column(
                 children: [
                   SizedBox(height: 25.0),
@@ -50,34 +52,9 @@ class _SignUpState extends State<SignUp> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.0),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: OutlineInputBorder(),
-                          ),
-                          obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
+                        CustomForm(
+                          emailController: _emailController,
+                          passwordController: _passwordController,
                         ),
                         SizedBox(height: 16.0),
                         Container(

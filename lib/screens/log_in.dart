@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokecho/controller/log_in_controller.dart';
+import 'package:pokecho/utils/custom_form.dart';
 import 'package:pokecho/utils/url_launcher.dart';
 
 class LogIn extends StatefulWidget {
@@ -50,35 +51,9 @@ class _LogInState extends State<LogIn> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.0),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: OutlineInputBorder(),
-                          ),
-                          obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
-                        ),
+                        CustomForm(
+                            emailController: _emailController,
+                            passwordController: _passwordController),
                         SizedBox(height: 16.0),
                         Container(
                           height: 50,
