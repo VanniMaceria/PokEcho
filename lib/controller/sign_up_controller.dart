@@ -2,20 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pokecho/controller/ricerca_controller.dart';
 import 'package:pokecho/model/auth.dart';
+import 'package:pokecho/model/utente_model.dart';
 import 'package:pokecho/screens/log_in.dart';
+import 'package:pokecho/model/bean/Utente.dart';
 
 class SignUpController {
   final RicercaController _ricercaController = RicercaController();
+  final UtenteModel _utenteModel = UtenteModel();
 
   SignUpController();
 
   Future<void> signUp(
       {required BuildContext context,
       required TextEditingController email,
-      required TextEditingController password}) async {
+      required TextEditingController password,
+      required Utente utente}) async {
     try {
       await Auth().createUserWithEmailAndPassword(
           email: email.text, password: password.text);
+      _utenteModel.createFireStoreUser(
+          utente: Utente(email.text, password.text));
       //vai a login
       Navigator.push(
         context,

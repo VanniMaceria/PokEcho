@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokecho/model/bean/Utente.dart';
 import '../controller/sign_up_controller.dart';
 import 'package:pokecho/utils/url_launcher.dart';
 import 'package:pokecho/utils/custom_form.dart';
@@ -71,6 +72,8 @@ class _SignUpState extends State<SignUp> {
                                   context: context,
                                   email: _emailController,
                                   password: _passwordController,
+                                  utente: Utente(_emailController.text,
+                                      _passwordController.text),
                                 );
                               }
                             },
