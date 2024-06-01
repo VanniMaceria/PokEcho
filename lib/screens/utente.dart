@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pokecho/controller/utente_controller.dart';
+import 'package:pokecho/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Utente extends StatefulWidget {
   const Utente({super.key});
@@ -8,10 +11,317 @@ class Utente extends StatefulWidget {
 }
 
 class _UtenteState extends State<Utente> {
+  final UtenteController _utenteController = UtenteController();
+  late Future<DocumentSnapshot?> _userDetails;
+  late String _currentUserId = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserDetails();
+  }
+
+  Future<void> _loadUserDetails() async {
+    String? userEmail = _utenteController.getCurrentUserEmail();
+    if (userEmail != null) {
+      _userDetails = _utenteController.getUserDetailsByEmail(userEmail);
+      DocumentSnapshot? userDoc = await _userDetails;
+
+      if (userDoc != null && userDoc.exists) {
+        var data = userDoc.data() as Map<String, dynamic>;
+        setState(() {
+          _currentUserId = userDoc.id;
+          print("UID utente: $_currentUserId");
+        });
+        print("Email: ${data['email']}");
+        //print("Password: ${data['password']}");
+        //print("Best Score: ${data['bestScore']}");
+      } else {
+        print("User not found");
+      }
+    } else {
+      print("User is not authenticated");
+    }
+  }
+
+  Future<void> _showEditDialog(
+      String field, String initialValue, Function(String) onSave) async {
+    final TextEditingController controller =
+        TextEditingController(text: initialValue);
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit $field'),
+          content: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: field,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                onSave(controller.text);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildUserInfoRow(BuildContext context, String field, String value,
+      Function(String)? onSave) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("$field: $value"),
+          if (onSave != null)
+            IconButton(
+              icon: Icon(Icons.edit, color: Colors.black),
+              onPressed: () {
+                _showEditDialog(field, value, onSave);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    //modifica email/password
-    //posizione in classifica
-    return Scaffold();
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+            top: 40,
+            left: 0,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+          Positioned(
+            top: 140,
+            left: 16,
+            child: FutureBuilder<DocumentSnapshot?>(
+              future: _userDetails,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading...");
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Text("User not found");
+                } else {
+                  var data = snapshot.data!.data() as Map<String, dynamic>;
+                  return Container(
+                    width: MediaQuery.of(context).size.width -
+                        100, // To prevent overflow
+                    child: Text(
+                      "Welcome back\n${data['email']}",
+                      style: TextStyle(fontSize: 30),
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+          Center(
+            child: FutureBuilder<DocumentSnapshot?>(
+              future: _userDetails,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Text("User not found");
+                } else {
+                  var data = snapshot.data!.data() as Map<String, dynamic>;
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildUserInfoRow(
+                        context,
+                        'Email',
+                        data['email'],
+                        (newValue) async {
+                          // Logica per aggiornare l'email
+                          await _utenteController.updateUserEmail(
+                              snapshot.data!.id, newValue);
+                          setState(() {
+                            _userDetails = _utenteController
+                                .getUserDetailsByEmail(newValue);
+                          });
+                        },
+                      ),
+                      SizedBox(height: 16.0),
+                      _buildUserInfoRow(
+                        context,
+                        'Password',
+                        data['password'],
+                        (newValue) async {
+                          // Logica per aggiornare la password
+                          await _utenteController.updateUserPassword(
+                              snapshot.data!.id, newValue);
+                          setState(() {
+                            _userDetails = _utenteController
+                                .getUserDetailsByEmail(data['email']);
+                          });
+                        },
+                      ),
+                      SizedBox(height: 16.0),
+                      _buildUserInfoRow(
+                        context,
+                        'Best Score',
+                        data['bestScore'].toString(),
+                        null,
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            backgroundColor: Colors.black,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); //Chiudi l'alert
+                        },
+                        child: const Text(
+                          "No",
+                          style: TextStyle(color: Colors.black, fontSize: 20),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          //l'utente va cancellato anche da Auth
+                          _utenteController.deleteUser(_currentUserId);
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => RootPage()),
+                            (Route<dynamic> route) => false,
+                          );
+                        },
+                        child: const Text(
+                          "Yes",
+                          style:
+                              TextStyle(color: Color(0xFFD02525), fontSize: 20),
+                        ),
+                      ),
+                    ],
+                    title: const Center(
+                      child: Text(
+                        'Are you sure to delete this account?\nThe action is permanent!',
+                        style: TextStyle(fontSize: 32),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Icon(
+              Icons.person_off_rounded,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            backgroundColor: Color(0xFFD02525),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); //Chiudi l'alert
+                        },
+                        child: const Text(
+                          "No",
+                          style: TextStyle(color: Colors.black, fontSize: 20),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _utenteController.logOut();
+                          //torna alla home e cancella la cronologia delle pagine
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => RootPage()),
+                            (Route<dynamic> route) => false,
+                          );
+                        },
+                        child: const Text(
+                          "Yes",
+                          style:
+                              TextStyle(color: Color(0xFFD02525), fontSize: 20),
+                        ),
+                      ),
+                    ],
+                    title: const Center(
+                      child: Text(
+                        'Are you sure to log out?',
+                        style: TextStyle(fontSize: 32),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Icon(Icons.logout),
+          ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            backgroundColor: Color(0xFFD02525),
+            child: Icon(
+              Icons.home,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RootPage()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
