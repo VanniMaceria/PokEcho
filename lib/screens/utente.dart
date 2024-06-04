@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokecho/controller/utente_controller.dart';
 import 'package:pokecho/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Utente extends StatefulWidget {
   const Utente({super.key});
@@ -12,34 +13,56 @@ class Utente extends StatefulWidget {
 
 class _UtenteState extends State<Utente> {
   final UtenteController _utenteController = UtenteController();
-  late Future<DocumentSnapshot?> _userDetails;
+  late Future<DocumentSnapshot?> _userDetails = Future.value(null);
   late String _currentUserId = "";
+  late SharedPreferences _prefs;
+  late String? _userEmail;
+  bool _isLoading = true; // Variabile per tracciare lo stato del caricamento
 
   @override
   void initState() {
     super.initState();
-    _loadUserDetails();
+    _initPrefs();
+  }
+
+  void _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    await _loadUserDetails(); // Attendi il completamento del caricamento
   }
 
   Future<void> _loadUserDetails() async {
-    String? userEmail = _utenteController.getCurrentUserEmail();
-    if (userEmail != null) {
-      _userDetails = _utenteController.getUserDetailsByEmail(userEmail);
+    setState(() {
+      _isLoading = true; // Inizia il caricamento
+    });
+
+    if (_prefs.getBool("login") == true) {
+      _userEmail = _prefs.getString("email");
+    } else {
+      _userEmail = _utenteController.getCurrentUserEmail();
+    }
+
+    if (_userEmail != null) {
+      _userDetails = _utenteController.getUserDetailsByEmail(_userEmail!);
       DocumentSnapshot? userDoc = await _userDetails;
 
       if (userDoc != null && userDoc.exists) {
         var data = userDoc.data() as Map<String, dynamic>;
         setState(() {
           _currentUserId = userDoc.id;
+          _isLoading = false; // Caricamento completato
           print("UID utente: $_currentUserId");
         });
         print("Email: ${data['email']}");
-        //print("Password: ${data['password']}");
-        //print("Best Score: ${data['bestScore']}");
       } else {
+        setState(() {
+          _isLoading = false; // Caricamento completato
+        });
         print("User not found");
       }
     } else {
+      setState(() {
+        _isLoading = false; // Caricamento completato
+      });
       print("User is not authenticated");
     }
   }
@@ -119,92 +142,98 @@ class _UtenteState extends State<Utente> {
               },
             ),
           ),
-          Positioned(
-            top: 140,
-            left: 16,
-            child: FutureBuilder<DocumentSnapshot?>(
-              future: _userDetails,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading...");
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Text("User not found");
-                } else {
-                  var data = snapshot.data!.data() as Map<String, dynamic>;
-                  return Container(
-                    width: MediaQuery.of(context).size.width -
-                        100, // To prevent overflow
-                    child: Text(
-                      "Welcome back\n${data['email']}",
-                      style: TextStyle(fontSize: 30),
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  );
-                }
-              },
+          if (_isLoading) // Mostra l'indicatore di caricamento se _isLoading è true
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            Positioned(
+              top: 140,
+              left: 16,
+              child: FutureBuilder<DocumentSnapshot?>(
+                future: _userDetails,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("Loading...");
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return Text("User not found");
+                  } else {
+                    var data = snapshot.data!.data() as Map<String, dynamic>;
+                    return Container(
+                      width: MediaQuery.of(context).size.width -
+                          100, // To prevent overflow
+                      child: Text(
+                        "Welcome back\n${data['email']}",
+                        style: TextStyle(fontSize: 30),
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-          Center(
-            child: FutureBuilder<DocumentSnapshot?>(
-              future: _userDetails,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Text("User not found");
-                } else {
-                  var data = snapshot.data!.data() as Map<String, dynamic>;
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildUserInfoRow(
-                        context,
-                        'Email',
-                        data['email'],
-                        (newValue) async {
-                          // Logica per aggiornare l'email
-                          await _utenteController.updateUserEmail(
-                              snapshot.data!.id, newValue);
-                          setState(() {
-                            _userDetails = _utenteController
-                                .getUserDetailsByEmail(newValue);
-                          });
-                        },
-                      ),
-                      SizedBox(height: 16.0),
-                      _buildUserInfoRow(
-                        context,
-                        'Password',
-                        data['password'],
-                        (newValue) async {
-                          // Logica per aggiornare la password
-                          await _utenteController.updateUserPassword(
-                              snapshot.data!.id, newValue);
-                          setState(() {
-                            _userDetails = _utenteController
-                                .getUserDetailsByEmail(data['email']);
-                          });
-                        },
-                      ),
-                      SizedBox(height: 16.0),
-                      _buildUserInfoRow(
-                        context,
-                        'Best Score',
-                        data['bestScore'].toString(),
-                        null,
-                      ),
-                    ],
-                  );
-                }
-              },
+          if (!_isLoading)
+            Center(
+              child: FutureBuilder<DocumentSnapshot?>(
+                future: _userDetails,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return Text("User not found");
+                  } else {
+                    var data = snapshot.data!.data() as Map<String, dynamic>;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildUserInfoRow(
+                          context,
+                          'Email',
+                          data['email'],
+                          (newValue) async {
+                            // Logica per aggiornare l'email
+                            await _utenteController.updateUserEmail(
+                                snapshot.data!.id, newValue);
+                            setState(() {
+                              _userDetails = _utenteController
+                                  .getUserDetailsByEmail(newValue);
+                            });
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+                        _buildUserInfoRow(
+                          context,
+                          'Password',
+                          data['password'],
+                          (newValue) async {
+                            // Logica per aggiornare la password
+                            await _utenteController.updateUserPassword(
+                                snapshot.data!.id, newValue);
+                            setState(() {
+                              _userDetails = _utenteController
+                                  .getUserDetailsByEmail(data['email']);
+                            });
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+                        _buildUserInfoRow(
+                          context,
+                          'Best Score',
+                          data['bestScore'].toString(),
+                          null,
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
             ),
-          ),
         ],
       ),
       floatingActionButton: Column(
@@ -231,6 +260,11 @@ class _UtenteState extends State<Utente> {
                         onPressed: () {
                           //l'utente va cancellato anche da Auth
                           _utenteController.deleteUser(_currentUserId);
+
+                          //azzero la sessione dell'utente
+                          _prefs.setBool("login", false);
+                          _prefs.setString("email", "");
+                          _prefs.setString("password", "");
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(builder: (context) => RootPage()),
@@ -247,7 +281,7 @@ class _UtenteState extends State<Utente> {
                     title: const Center(
                       child: Text(
                         'Are you sure to delete this account?\nThe action is permanent!',
-                        style: TextStyle(fontSize: 32),
+                        style: TextStyle(fontSize: 26),
                       ),
                     ),
                   );
@@ -280,6 +314,10 @@ class _UtenteState extends State<Utente> {
                       TextButton(
                         onPressed: () {
                           _utenteController.logOut();
+                          _prefs.setBool("login", false);
+                          _prefs.setString("email", "");
+                          _prefs.setString("password", "");
+
                           //torna alla home e cancella la cronologia delle pagine
                           Navigator.pushAndRemoveUntil(
                             context,
@@ -297,7 +335,7 @@ class _UtenteState extends State<Utente> {
                     title: const Center(
                       child: Text(
                         'Are you sure to log out?',
-                        style: TextStyle(fontSize: 32),
+                        style: TextStyle(fontSize: 26),
                       ),
                     ),
                   );

@@ -2,26 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:pokecho/screens/autenticazione.dart';
 import 'package:pokecho/screens/info.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pokecho/screens/utente.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// ignore: must_be_immutable
-class CustomAppBarHome extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBarHome extends StatefulWidget implements PreferredSizeWidget {
   final String title;
-  final BuildContext context; //serve ad ottenere il contesto
-
-  List<Widget>? actions;
+  final BuildContext context;
 
   CustomAppBarHome({
     Key? key,
     required this.title,
     required this.context,
-  }) : super(key: key) {
+  }) : super(key: key);
+
+  @override
+  _CustomAppBarHomeState createState() => _CustomAppBarHomeState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _CustomAppBarHomeState extends State<CustomAppBarHome> {
+  late SharedPreferences _prefs;
+  List<Widget>? actions;
+
+  Future<void> _initializePrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
     actions = [
       IconButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Autenticazione()),
-          );
+          if (_prefs.getBool("login") == true) {
+            Navigator.push(
+              widget.context,
+              MaterialPageRoute(builder: (context) => Utente()),
+            );
+          } else {
+            Navigator.push(
+              widget.context,
+              MaterialPageRoute(builder: (context) => Autenticazione()),
+            );
+          }
         },
         icon: const Icon(
           Icons.person,
@@ -31,7 +57,7 @@ class CustomAppBarHome extends StatelessWidget implements PreferredSizeWidget {
       IconButton(
         onPressed: () {
           Navigator.push(
-            context,
+            widget.context,
             MaterialPageRoute(builder: (context) => const Info()),
           );
         },
@@ -41,6 +67,8 @@ class CustomAppBarHome extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
     ];
+
+    _initializePrefs();
   }
 
   @override
@@ -61,7 +89,4 @@ class CustomAppBarHome extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

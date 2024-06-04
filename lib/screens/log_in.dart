@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pokecho/controller/log_in_controller.dart';
 import 'package:pokecho/utils/custom_form.dart';
 import 'package:pokecho/utils/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class LogIn extends StatefulWidget {
-  const LogIn({super.key});
+  LogIn({super.key});
 
   @override
   State<LogIn> createState() => _LogInState();
@@ -16,6 +18,17 @@ class _LogInState extends State<LogIn> {
   final _passwordController = TextEditingController();
   final LogInController _logInController = LogInController();
   final UrlLauncher _urlLauncher = UrlLauncher();
+  late final SharedPreferences _prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPrefs();
+  }
+
+  void _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +78,13 @@ class _LogInState extends State<LogIn> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 // Process data
+                                //salvo le credenziali con SharedPreferences, serve per mantenere l'utente loggato
+                                _prefs.setBool("login", true);
+                                _prefs.setString(
+                                    "email", _emailController.text);
+                                _prefs.setString(
+                                    "password", _passwordController.text);
+
                                 _logInController.logIn(
                                   context: context,
                                   email: _emailController,

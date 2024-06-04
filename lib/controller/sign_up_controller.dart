@@ -25,7 +25,7 @@ class SignUpController {
       //vai a login
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LogIn()),
+        MaterialPageRoute(builder: (context) => LogIn()),
       );
     } on FirebaseAuthException catch (error) {
       String errorMessage;

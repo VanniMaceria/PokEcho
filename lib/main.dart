@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pokecho/screens/classifica.dart';
 import 'package:pokecho/screens/home.dart';
 import 'package:pokecho/screens/ricerca.dart';
 
@@ -67,7 +68,8 @@ class _RootPageState extends State<RootPage> {
   int currentPage = 0;
   List<Widget> pages = [
     Home(),
-    Ricerca()
+    Ricerca(),
+    Classifica()
   ]; //lista delle pagine della bottomNavigationBar
 
   @override
@@ -90,6 +92,10 @@ class _RootPageState extends State<RootPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: "Search",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.leaderboard),
+            label: "Leaderboard",
           )
         ],
         onTap: (int index) {
