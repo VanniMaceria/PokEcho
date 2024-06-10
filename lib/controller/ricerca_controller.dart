@@ -34,4 +34,16 @@ class RicercaController {
       print("URL del verso non disponibile");
     }
   }
+
+  Future<String> fetchPokemonSprite(int index) async {
+    final response =
+        await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$index'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['sprites']['versions']['generation-v']['black-white']
+          ['animated']['front_default'];
+    } else {
+      throw Exception('Failed to load Pokemon image');
+    }
+  }
 }
