@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pokecho/controller/connection_controller.dart';
 import 'package:pokecho/controller/home_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:pokecho/controller/utente_controller.dart';
 import 'package:pokecho/utils/custom_appbar_home.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +27,8 @@ class _HomeState extends State<Home> {
   bool _playButtonPressed = false;
   Timer? _timer;
   int _timeLeft = 10;
+  UtenteController _utenteController = UtenteController();
+  late Future<DocumentSnapshot?> _userDetails = Future.value(null);
 
   @override
   void initState() {
@@ -43,6 +47,14 @@ class _HomeState extends State<Home> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt("CurrentScore", _score);
     await prefs.setInt("BestScore", _bestScore);
+
+    //aggiorno il 'bestScore' anche in Firestore
+    if (_prefs.getBool("login") == true) {
+      _userDetails =
+          _utenteController.getUserDetailsByEmail(_prefs.getString("email")!);
+      DocumentSnapshot? userDoc = await _userDetails;
+      _utenteController.updateUserBestScore(userDoc!.id, _bestScore);
+    }
   }
 
   void _loadScores() async {
@@ -73,7 +85,7 @@ class _HomeState extends State<Home> {
     selectedPokemonIndexFuture.then((selectedPokemonIndex) {
       _indexCurrentPkmn.then((indexCurrentPkmn) {
         if (selectedPokemonIndex == indexCurrentPkmn) {
-          setState(() {
+          setState(() async {
             _score++;
             if (_score > _bestScore) {
               _bestScore = _score;
