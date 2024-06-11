@@ -16,9 +16,11 @@ Mobile application game that allows to play pokèmon cries and take a quiz on th
 <br><br>
 Here some screenshots:
 <div align ="center">
-  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/d88db6ff-417f-4f04-aaee-12c34e6c97e4" width="230" height="500"> &nbsp; &nbsp;
+  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/1be96087-e55a-4d73-855c-20c3da15faa7" width="230" height="500"> &nbsp; &nbsp;
   <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/bc8af912-8126-4439-a89e-1f6c04ff6936" width="230" height="500"> &nbsp; &nbsp;
-  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/dbd3be88-a33b-4c9d-a568-c74d8f5bc019" width="230" height="500"> 
+  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/dbd3be88-a33b-4c9d-a568-c74d8f5bc019" width="230" height="500"> &nbsp; &nbsp;
+  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/a5235e59-66c3-4d08-beeb-93cf585d8f9d" width="230" height="500"> &nbsp; &nbsp;
+  <img src="https://github.com/VanniMaceria/PokEcho/assets/114587415/ea4d6a33-b088-4bd4-84a4-ce9ad5f70ce3" width="230" height="500">
 </div>
 
 <br>
