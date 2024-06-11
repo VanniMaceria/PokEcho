@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pokecho/model/bean/Utente.dart';
 import 'package:pokecho/model/utente_model.dart';
 import 'package:pokecho/controller/ricerca_controller.dart';
-import 'package:pokecho/utils/custom_appbar_back.dart';
 
 class Classifica extends StatefulWidget {
   const Classifica({super.key});
@@ -19,7 +18,11 @@ class _ClassificaState extends State<Classifica> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarBack(title: "Leaderboard"),
+      appBar: AppBar(
+        title: Text("Leaderboard"),
+        backgroundColor: const Color(0xFFD02525),
+        automaticallyImplyLeading: false,
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: utenteModel.selectTop151Users(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

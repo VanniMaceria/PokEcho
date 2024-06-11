@@ -49,11 +49,17 @@ class _HomeState extends State<Home> {
     await prefs.setInt("BestScore", _bestScore);
 
     //aggiorno il 'bestScore' anche in Firestore
+    //prima controllo se l'utente è loggato
     if (_prefs.getBool("login") == true) {
       _userDetails =
           _utenteController.getUserDetailsByEmail(_prefs.getString("email")!);
+
+      //se è loggato ed il bestScore locale è maggiore di quello nel db, aggiorna
       DocumentSnapshot? userDoc = await _userDetails;
-      _utenteController.updateUserBestScore(userDoc!.id, _bestScore);
+      var data = userDoc!.data() as Map<String, dynamic>;
+      if (data['bestScore'] < _bestScore) {
+        _utenteController.updateUserBestScore(userDoc.id, _bestScore);
+      }
     }
   }
 
