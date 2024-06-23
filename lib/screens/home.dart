@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
   int _timeLeft = 10;
   UtenteController _utenteController = UtenteController();
   late Future<DocumentSnapshot?> _userDetails = Future.value(null);
+  bool _gameInProgress = false;
 
   @override
   void initState() {
@@ -72,10 +73,8 @@ class _HomeState extends State<Home> {
   }
 
   void _aggiornaPokemon() async {
-    _timer?.cancel(); //annulla il timer quando i Pokémon vengono aggiornati
     _homeController.setListIds(_homeController.getRandomPokemonIds());
     setState(() {
-      _playButtonPressed = false;
       _homeController.setPokemonDetails1(
           _homeController.fetchPokemonDetails(_homeController.getListIds()[0]));
       _homeController.setPokemonDetails2(
@@ -97,9 +96,12 @@ class _HomeState extends State<Home> {
               _bestScore = _score;
               _prefs.setInt("BestScore", _bestScore); //aggiorno il nuovo record
             }
-            _aggiornaPokemon();
             _saveScores(); //meglio tener sempre aggiornati i punteggi
+            _aggiornaPokemon();
+            _timer?.cancel(); //cancella il timer quando la partita è vinta
             _timeLeft = 10;
+            _gameInProgress = false;
+            _playButtonPressed = false;
           });
         } else {
           setState(() {
@@ -108,6 +110,10 @@ class _HomeState extends State<Home> {
             _mostraGameOverDialog(
                 _homeController.getListIds()[indexCurrentPkmn]);
             _saveScores(); //meglio tener sempre aggiornati i punteggi
+            _timer?.cancel();
+            _timeLeft = 10;
+            _gameInProgress = false;
+            _playButtonPressed = false;
           });
         }
       });
@@ -129,8 +135,11 @@ class _HomeState extends State<Home> {
           content: GestureDetector(
             onTap: () {
               Navigator.of(context).pop();
-              _timer?.cancel;
-              _timeLeft = 10;
+              _timer?.cancel();
+              _timeLeft =
+                  10; //resetta il timer a 10 secondi quando la partita è persa
+              _playButtonPressed = false;
+              _gameInProgress = false;
               _aggiornaPokemon();
             },
             child: Column(
@@ -145,9 +154,9 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: const Icon(
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: Icon(
                     Icons.refresh_outlined,
                     color: Color(0xFFD02525),
                     size: 50,
@@ -162,8 +171,11 @@ class _HomeState extends State<Home> {
   }
 
   void _startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
+    //cancella il timer esistente se presente
+    _timer?.cancel();
+
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
         if (_timeLeft == 0) {
@@ -296,8 +308,11 @@ class _HomeState extends State<Home> {
                           int index = await _homeController.riproduciSuono();
                           setState(() {
                             _indexCurrentPkmn = Future.value(index);
-                            _playButtonPressed = true;
-                            if (_playButtonPressed) {
+                            if (!_gameInProgress) {
+                              _playButtonPressed = true;
+                              _gameInProgress = true;
+                              _timeLeft =
+                                  10; //resetta il timer a 10 secondi quando viene premuto il pulsante 'play' per la prima volta
                               _startTimer();
                             }
                           });
@@ -328,7 +343,7 @@ class _HomeState extends State<Home> {
   void dispose() {
     _homeController.getAudioPlayer().dispose();
     _saveScores(); //salvataggio dei punteggi prima di distruggere il widget
-    _timer!.cancel();
+    _timer?.cancel(); //cancella il timer esistente
     super.dispose();
   }
 }
